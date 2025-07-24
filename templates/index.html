@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Speech to Text</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>🎤 Speech to Text App</h1>
+        <button onclick="startListening()">Start Listening</button>
+        <p><strong>Recognized Text:</strong></p>
+        <div id="resultBox"></div>
+        <p id="error" class="error"></p>
+    </div>
+
+    <script>
+        function startListening() {
+            const resultBox = document.getElementById("resultBox");
+            const errorBox = document.getElementById("error");
+            errorBox.textContent = "";
+
+            if (!('webkitSpeechRecognition' in window)) {
+                errorBox.textContent = "Sorry, your browser does not support speech recognition.";
+                return;
+            }
+
+            const recognition = new webkitSpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
+
+            recognition.start();
+
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                resultBox.textContent = transcript;
+            };
+
+            recognition.onerror = function(event) {
+                errorBox.textContent = "Error occurred: " + event.error;
+            };
+
+            recognition.onend = function() {
+                console.log("Speech recognition ended");
+            };
+        }
+    </script>
+</body>
+</html>
